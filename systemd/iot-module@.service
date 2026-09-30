@@ -1,0 +1,13 @@
+[Unit]
+Description=IoT Module %i
+After=network-online.target iot-agent.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/iot/modules/%i
+ExecStart=/opt/iot/modules/%i/venv/bin/python /opt/iot/modules/%i/module.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

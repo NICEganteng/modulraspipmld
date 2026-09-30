@@ -1,0 +1,15 @@
+[Unit]
+Description=IoT Device Agent
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/iot-agent
+ExecStart=/opt/iot-agent/venv/bin/python /opt/iot-platform/agent/main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
