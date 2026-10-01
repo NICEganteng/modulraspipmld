@@ -20,8 +20,15 @@ client.loop_start()
 
 
 def read_temp():
-    with open("/sys/class/thermal/thermal_zone0/temp") as f:
-        return int(f.read()) / 1000
+    """Membaca suhu CPU dan mengonversinya ke Fahrenheit."""
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            celsius = int(f.read().strip()) / 1000.0
+            fahrenheit = (celsius * 1.8) + 32
+            return round(fahrenheit, 2)
+    except Exception:
+        return 0.0
+
 
 
 while True:
