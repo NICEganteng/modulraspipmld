@@ -33,6 +33,17 @@ def save_current(current):
 
 
 def install(name, version):
+    # 1. Daftarkan HANYA modul spesifik ini agar diunduh oleh Git
+    sh(
+        "git",
+        "-C",
+        str(REPO),
+        "sparse-checkout",
+        "add",
+        f"modules/{name}",
+    )
+
+    # 2. Tarik kode modul spesifik tersebut
     sh(
         "git",
         "-C",
@@ -97,6 +108,15 @@ def remove(name):
         MODULES / name,
         ignore_errors=True,
     )
+
+    # Bersihkan checkout modul dari /opt/iot-platform agar hemat disk
+    try:
+        current_modules = list(load_current().keys())
+        # Susun ulang daftar folder yang di-checkout
+        allowed_paths = ["agent", "scripts", "systemd"] + [f"modules/{m}" for m in current_modules if m != name]
+        sh("git", "-C", str(REPO), "sparse-checkout", "set", *allowed_paths)
+    except Exception:
+        pass
 
 
 def reconcile(desired, report):

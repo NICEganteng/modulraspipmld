@@ -15,13 +15,16 @@ apt-get install -y \
     python3-venv
 
 
-# Clone repository
+# Clone repository dengan Sparse-Checkout (Tanpa mengunduh modul apapun diawal)
 if [ ! -d /opt/iot-platform ]; then
-    git clone "$REPO_URL" /opt/iot-platform
+    git clone --filter=blob:none --no-checkout "$REPO_URL" /opt/iot-platform
+    git -C /opt/iot-platform sparse-checkout init --cone
+    # Hanya checkout folder agent, scripts, dan systemd
+    git -C /opt/iot-platform sparse-checkout set agent scripts systemd
+    git -C /opt/iot-platform checkout main
 else
     git -C /opt/iot-platform pull --ff-only
 fi
-
 
 # Prepare directories
 mkdir -p \
